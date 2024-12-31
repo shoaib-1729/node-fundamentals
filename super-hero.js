@@ -10,6 +10,7 @@ class Superhero {
     }
 }
 
+
 // export instance of the class
 // module.exports = new Superhero("Batman")
 

@@ -20,21 +20,21 @@
 //  multiple value export
 
 // third pattern
-const add = (a, b) => {
-    return a + b
-}
-const subtract = (a, b) => {
-    return a - b
-}
-module.exports = {
-        add: add,
-        subtract: subtract
-    }
-    // using es6 syntax
-    // module.exports = {
-    //     add,
-    //     subtract,
-    // }
+// const add = (a, b) => {
+//     return a + b
+// }
+// const subtract = (a, b) => {
+//     return a - b
+// }
+// module.exports = {
+//         add: add,
+//         subtract: subtract
+//     }
+// using es6 syntax
+// module.exports = {
+//     add,
+//     subtract,
+// }
 
 // fourth pattern
 // module.exports.add = (a, b) => {
@@ -54,3 +54,17 @@ module.exports = {
 
 // after assignment of exports
 // console.log(module.exports);
+
+// note: in this case module.exports will lost reference to exports object, and will be empty
+const add = (a, b) => {
+    return a + b
+}
+const subtract = (a, b) => {
+    return a - b
+}
+
+// after brand new assignment of exports
+exports = {
+    add,
+    subtract,
+}

@@ -31,6 +31,6 @@
 // console.log(superman.getName());
 
 // import/export patterns
-const mathFn = require("./math")
-console.log(mathFn.add(2, 3))
-console.log(mathFn.subtract(2, 3))
+const math = require("./math")
+console.log(math.add(2, 3))
+console.log(math.subtract(2, 3))
