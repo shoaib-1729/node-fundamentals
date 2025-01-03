@@ -1,7 +1,7 @@
 // streams in nodejs
-// steams allows to work with data in chunks rather than whole data all at once, this saves a lot of memory since we don 't have to transfer the data to a temporary memory to transfer it to a file, we simply transfer data in chunks using streams and buffers (used for storing the chunks of data)
-// many built - in modules like fs and https uses streams behind the scenes
-// we will be understand streams using fs module by transferring data from a file to another file
+// steams allows to work with data in chunks rather than whole data all at once, this saves a lot of memory since we don't have to transfer the data to a temporary memory to transfer it to a file, we simply transfer data in chunks using streams and buffers (used for storing the chunks of data)
+// many built-in modules like fs and https uses streams behind the scenes
+// we will be understanding streams using fs module by transferring data from a file to another file
 // import fs module
 const fs = require("node:fs")
 const readableStream = fs.createReadStream("file.txt", {
