@@ -73,3 +73,8 @@ for (let i = 0; i < MAX_CALLS; i++) {
 }
 
 // note: halaaki hum thread pool size ko increase kar sakte hai performance improve karne ke liye lekin ek hadd takk, uske baad saare tasks almost same time lege, yeh depend karega aapke cpu cors par, cpu cors se zyada threads hone par har threads lagbhag same time legi
+
+// remember: 
+
+// 1. Thread Pool Size and CPU Core Allocation: Thread pool size ko 8 set karne ka matlab yeh nahi hai ki har thread ko ek specific CPU core assign hoga. Thread scheduling OS-level decision hota hai, jo exact time mein vary kar sakta hai.
+// 2. Execution Timing Differences: CPU-bound operations aur OS-level scheduler ke kaam karne ke tareeke ki wajah se thread timings mein difference ho sakta hai.
