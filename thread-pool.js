@@ -57,24 +57,47 @@
 // example-4: increasing thread pool size to improve performance of execution of async tasks
 
 // crypto module: used to hash passwords
-const crypto = require("node:crypto")
+// const crypto = require("node:crypto")
 
-// increasing thread pool size using process environment variable available in nodejs
-process.env.UV_THREADPOOL_SIZE = 8;
+// // increasing thread pool size using process environment variable available in nodejs
+// process.env.UV_THREADPOOL_SIZE = 8;
+
+// // set max calls
+// const MAX_CALLS = 8;
+
+// const start = Date.now();
+// for (let i = 0; i < MAX_CALLS; i++) {
+//     crypto.pbkdf2("password", "salt", 100000, 512, "sha512", () => {
+//         console.log(`Hash: ${i+1}`, Date.now() - start);
+//     });
+// }
+
+// // note: halaaki hum thread pool size ko increase kar sakte hai performance improve karne ke liye lekin ek hadd takk, uske baad saare tasks almost same time lege, yeh depend karega aapke cpu cors par, cpu cors se zyada threads hone par har threads lagbhag same time legi
+
+// // remember:
+
+// // 1. Thread Pool Size and CPU Core Allocation: Thread pool size ko 8 set karne ka matlab yeh nahi hai ki har thread ko ek specific CPU core assign hoga. Thread scheduling OS-level decision hota hai, jo exact time mein vary kar sakta hai.
+// // 2. Execution Timing Differences: CPU-bound operations aur OS-level scheduler ke kaam karne ke tareeke ki wajah se thread timings mein difference ho sakta hai.
+// // example-4: increasing thread pool size to improve performance of execution of async tasks
+
+////////////////////////////////////////////////
+
+// example 5: har async method libuv ke thread pool dwara nahi execute hoga, kuch methods OS ke kernel ke dwara handle kiye jaate hai jaise network requests like http and https joh async in nature hote hai..
+const https = require("node:https")
 
 // set max calls
-const MAX_CALLS = 8;
+const MAX_CALLS = 16;
 
 const start = Date.now();
 for (let i = 0; i < MAX_CALLS; i++) {
-    crypto.pbkdf2("password", "salt", 100000, 512, "sha512", () => {
-        console.log(`Hash: ${i+1}`, Date.now() - start);
-    });
+    https
+        .request("https://www.google.com", (res) => {
+            res.on("data", () => {});
+            res.on("end", () => {
+                console.log(`Request: ${i+1}`, Date.now() - start);
+            });
+        })
+        .end();
 }
 
-// note: halaaki hum thread pool size ko increase kar sakte hai performance improve karne ke liye lekin ek hadd takk, uske baad saare tasks almost same time lege, yeh depend karega aapke cpu cors par, cpu cors se zyada threads hone par har threads lagbhag same time legi
-
-// remember: 
-
-// 1. Thread Pool Size and CPU Core Allocation: Thread pool size ko 8 set karne ka matlab yeh nahi hai ki har thread ko ek specific CPU core assign hoga. Thread scheduling OS-level decision hota hai, jo exact time mein vary kar sakta hai.
-// 2. Execution Timing Differences: CPU-bound operations aur OS-level scheduler ke kaam karne ke tareeke ki wajah se thread timings mein difference ho sakta hai.
+// note: har async operations libuv ke dwara nhi handle kiye jaate, kuch OS ke dwara bhi hote hai
