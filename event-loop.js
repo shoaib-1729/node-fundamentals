@@ -23,7 +23,7 @@ console.log('console.log 2');
 
 // ------------------------
 
-// experiment-3: promise queue v/s next tick queue (a bit updated version of exp-2)
+// experiment-2.1: promise queue v/s next tick queue (a bit updated version of exp-2)
 
 // // process.nextTick queue
 // process.nextTick(() => console.log('Next tick 1'));
@@ -47,5 +47,7 @@ console.log('console.log 2');
 // });
 // Promise.resolve().then(() => console.log('Promise 3'));
 
-// // inference from exp-3:
+// // inference from exp-2.1:
 // // same inference as of exp-2
+
+// remember: queues humesha FIFO order mei execute hoge
