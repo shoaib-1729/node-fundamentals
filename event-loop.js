@@ -1,7 +1,7 @@
 // experiment-1: analyzing task in next tick queue
 
 // console.log('console.log 1');
-// // next tick queue
+// next tick queue
 // process.nextTick(() => console.log(`Next tick 1`));
 // console.log('console.log 2');
 
@@ -142,18 +142,87 @@
 
 ///////////////////////////
 
-// experiment-5: execution order of nextTick queue, promise queue, and timer queue
+// // experiment-5: execution order of nextTick queue, promise queue, and timer queue
+
+// // timer queue
+// setTimeout(() => {
+//     console.log('SetTimeout 1');
+// }, 1000);
+// setTimeout(() => {
+//     console.log('SetTimeout 2');
+// }, 500);
+// setTimeout(() => {
+//     console.log('SetTimeout 3');
+// }, 0);
+
+// // inference from experiment-5:
+// // timer queue mei cheezei FIFO order mei execute hogi, yaani jiska delay kam hai woh pehle execute hoga aur jiska delay zyada hai woh baad mei execute hoga...
+
+///////////////////////////
+
+
+// // experiment-6: execution order of microtask queue, and I/O queue
+
+// // remember: i/o queue mei lagbhag saare async methods aate hai joh humne built-in modules mei padhe the
+
+// const fs = require("node:fs");
+
+// // i/o queue
+// fs.readFile(__filename, () => {
+//     console.log('reading file 1');
+// })
+
+// // next tick queue
+// process.nextTick(() => console.log('next tick 1'));
+
+// // promise queue
+// Promise.resolve().then(() => console.log('promise 1'));
+
+// // inference from experiment-6:
+// // pehle microtask queue execute hoga phir I/O queue ke callbacks execute hoge
+
+///////////////////////////
+
+// // experiment-7: execution order of I/O queue, and timer queue
+
+
+// const fs = require("node:fs");
+
+// // timer queue
+// setTimeout(() => console.log('set timeout 1'), 0);
+
+// // i/o queue
+// fs.readFile(__filename, () => {
+//     console.log('reading file 1');
+// })
+
+
+// // inference from experiment-7:
+// jab setTimeout 0 delay ke saath aur I/O async method saath hote hai toh execution order kabhi guaranteed nhi hota, kuch bhi ho sakta hai
+// yeh anomaly node ke minimum delay for timer functions se aa sakti hai jismei node 0ms delay ko 1ms delay se override kar deta hai, aur execution CPU kitna busy hai uspar bhi depend karti hai
+
+////////////////////
+
+// experiment-8: execution order of microtask queue, timer queue and I/O queue
+
+const fs = require("node:fs");
+
+// i/o queue
+fs.readFile(__filename, () => {
+    console.log('reading file 1');
+})
+
+// next tick queue
+process.nextTick(() => console.log('next tick 1'));
+
+// promise queue
+Promise.resolve().then(() => console.log('promise 1'));
 
 // timer queue
-setTimeout(() => {
-    console.log('SetTimeout 1');
-}, 1000);
-setTimeout(() => {
-    console.log('SetTimeout 2');
-}, 500);
-setTimeout(() => {
-    console.log('SetTimeout 3');
-}, 0);
+setTimeout(() => console.log('set timeout 1'), 0);
 
-// inference from experiment-5:
-// timer queue mei cheezei FIFO order mei execute hogi, yaani jiska delay kam hai woh pehle execute hoga aur jiska delay zyada hai woh baad mei execute hoga...
+// execution ko delay kardo taaki jab control event loop pr jaayein tab tak setTimeout queue ho chuka ho timer queue mei
+for (let i = 0; i < 2000000; i++);
+
+// inference from experiment-7:
+// pehle microtask queue ke callbacks execute hote hai, phir timer queue ke, uske baad I/O queue ke
