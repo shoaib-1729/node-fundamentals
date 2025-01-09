@@ -230,31 +230,155 @@
 
 ////////////
 
-// experiment-9: I/O Polling and close queue
+// // experiment-9: I/O Polling and check queue
 
-const fs = require("node:fs");
+// const fs = require("node:fs");
 
-// i/o queue
-fs.readFile(__filename, () => {
-    console.log('reading file 1');
-})
+// // i/o queue
+// fs.readFile(__filename, () => {
+//     console.log('reading file 1');
+// })
 
-// next tick queue
-process.nextTick(() => console.log('next tick 1'));
+// // next tick queue
+// process.nextTick(() => console.log('next tick 1'));
 
-// promise queue
-Promise.resolve().then(() => console.log('promise 1'));
+// // promise queue
+// Promise.resolve().then(() => console.log('promise 1'));
+
+// // timer queue
+// setTimeout(() => console.log('setTimeout 1'), 0);
+
+// // check queue
+// // check queue mei queue karne ke liye setImmediate async method ka istemaal kiya jaata hai
+// setImmediate(() => console.log('setImmediate 1'));
+
+// // execution ko delay kardo taaki jab control event loop pr jaayein tab tak setTimeout queue ho chuka ho timer queue mei
+// for (let i = 0; i < 2000000; i++);
+
+// // inference from experiment-9:
+// // yaha check queue pehle execute hua I/O queue se aisa kyu?
+// // yeh I/O polling ke karan hua hai, I/O queue mei async callbacks apne operation ke complete hone par hi queue kiye jaate hai, aur iske liye I/O polling ki jaati hai; kyuki I/O polling I/O queue ke baad hoti hai isiliye check queue pehle execute hua I/O queue se, aur jab dusri baad event loop ka iteration hoga tab I/O queue wala code run hoga
+
+////////////////////
+
+// // experiment-10: execution order of microtask queue, timer queue, I/O queue (I/O polling) and chek queue
+
+
+// const fs = require("node:fs");
+
+// // i/o queue
+// fs.readFile(__filename, () => {
+//     console.log('reading file 1');
+//     setImmediate(() => console.log('inner setImmediate inside readFile'))
+// })
+
+// // next tick queue
+// process.nextTick(() => console.log('next tick 1'));
+
+// // promise queue
+// Promise.resolve().then(() => console.log('promise 1'));
+
+// // timer queue
+// setTimeout(() => console.log('setTimeout 1'), 0);
+
+// // check queue
+// // check queue mei queue karne ke liye setImmediate async method ka istemaal kiya jaata hai
+// setImmediate(() => console.log('setImmediate 1'));
+
+// // execution ko delay kardo taaki jab control event loop pr jaayein tab tak setTimeout queue ho chuka ho timer queue mei
+// for (let i = 0; i < 2000000; i++);
+
+// // inference from experiment-10:
+// // check queue callback microtask queue, timer queue, and I/O queue ke baad execute hote hai
+
+// ////////////////////
+
+
+// // experiment-11: execution order of microtask queue, timer queue, I/O queue (I/O polling) and check queue
+
+
+// const fs = require("node:fs");
+
+// // i/o queue
+// fs.readFile(__filename, () => {
+//     console.log('reading file 1');
+//     setImmediate(() => console.log('inner setImmediate inside readFile'));
+//     // next tick queue
+//     process.nextTick(() => {
+//         console.log('inner nextTick inside readFile');
+//     });
+//     // promise queue
+//     Promise.resolve().then(() => {
+//         console.log('inner promise inside readFile');
+//     });
+// })
+
+
+// // next tick queue
+// process.nextTick(() => {
+//     console.log('next tick 1');
+// });
+
+// // promise queue
+// Promise.resolve().then(() => {
+//     console.log('promise 1');
+// });
+
+
+// // timer queue
+// setTimeout(() => console.log('setTimeout 1'), 0);
+
+// // check queue
+// setImmediate(() => console.log('setImmediate 1'));
+
+// // execution ko delay kardo
+// for (let i = 0; i < 2000000; i++);
+
+// // inference from experiment-11:
+// // microtask queues execute hoga I/O callback ke baad, uske baad hi control check queue par jaata hai, microtask queue ki priority hai event loop mei aur uska dhyaan rakhna hai...
+
+// ////////////////////
+
+
+// // experiment-12: execution order of microtask queue, timer queue, I/O queue (I/O polling) and check queue
+
+
+// // check queue
+// setImmediate(() => console.log('setImmediate 1'));
+// // check queue
+// setImmediate(() => {
+//     console.log('setImmediate 2');
+//     // next tick queue
+//     process.nextTick(() => {
+//         console.log('inner nextTick inside readFile');
+//     });
+//     // promise queue
+//     Promise.resolve().then(() => {
+//         console.log('inner promise inside readFile');
+//     });
+// });
+
+// setImmediate(() => console.log('setImmediate 3'));
+
+
+// // inference from experiment-12:
+// // check queue mei ek callback ke execution ek baad microtask queue ke callbacks execute hoge
+
+////////////////////
+
+
+// experiment-13: execution order of microtask queue, timer queue, I/O queue (I/O polling) and check queue
+
 
 // timer queue
-setTimeout(() => console.log('setTimeout 1'), 0);
+setTimeout(() => {
+    console.log('setTimeout 1');
+}, 0);
 
-// close queue
-// close queue mei queue karne ke liye setImmediate async method ka istemaal kiya jaata hai
-setImmediate(() => console.log('setImmediate 1'));
+// check queue
+setImmediate(() => {
+    console.log('setImmediate 1');
+})
 
-// execution ko delay kardo taaki jab control event loop pr jaayein tab tak setTimeout queue ho chuka ho timer queue mei
-for (let i = 0; i < 2000000; i++);
-
-// inference from experiment-9:
-// yaha close queue pehle execute hua I/O queue se aisa kyu?
-// yeh I/O polling ke karan hua hai, I/O queue mei async callbacks apne operation ke complete hone par hi queue kiye jaate hai, aur iske liye I/O polling ki jaati hai; kyuki I/O polling I/O queue ke baad hoti hai isiliye close queue pehle execute hua I/O queue se, aur jab dusri baad event loop ka iteration hoga tab I/O queue wala code run hoga
+// inference from experiment-13:
+// jab setTimeout with 0ms delay aur setImmediate ko saath mei run karege, us case mei order of execution guaranteed nhi hoga (timer ke 0ms delay of execution ke karan)
