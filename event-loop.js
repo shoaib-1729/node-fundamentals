@@ -189,7 +189,7 @@
 // const fs = require("node:fs");
 
 // // timer queue
-// setTimeout(() => console.log('set timeout 1'), 0);
+// setTimeout(() => console.log('setTimeout 1'), 0);
 
 // // i/o queue
 // fs.readFile(__filename, () => {
@@ -203,7 +203,34 @@
 
 ////////////////////
 
-// experiment-8: execution order of microtask queue, timer queue and I/O queue
+// // experiment-8: execution order of microtask queue, timer queue and I/O queue
+
+// const fs = require("node:fs");
+
+// // i/o queue
+// fs.readFile(__filename, () => {
+//     console.log('reading file 1');
+// })
+
+// // next tick queue
+// process.nextTick(() => console.log('next tick 1'));
+
+// // promise queue
+// Promise.resolve().then(() => console.log('promise 1'));
+
+// // timer queue
+// setTimeout(() => console.log('seTimeout 1'), 0);
+
+// // execution ko delay kardo taaki jab control event loop pr jaayein tab tak setTimeout queue ho chuka ho timer queue mei
+// for (let i = 0; i < 2000000; i++);
+
+// // inference from experiment-7:
+// // pehle microtask queue ke callbacks execute hote hai, phir timer queue ke, uske baad I/O queue ke
+
+
+////////////
+
+// experiment-9: I/O Polling and close queue
 
 const fs = require("node:fs");
 
@@ -219,10 +246,15 @@ process.nextTick(() => console.log('next tick 1'));
 Promise.resolve().then(() => console.log('promise 1'));
 
 // timer queue
-setTimeout(() => console.log('set timeout 1'), 0);
+setTimeout(() => console.log('setTimeout 1'), 0);
+
+// close queue
+// close queue mei queue karne ke liye setImmediate async method ka istemaal kiya jaata hai
+setImmediate(() => console.log('setImmediate 1'));
 
 // execution ko delay kardo taaki jab control event loop pr jaayein tab tak setTimeout queue ho chuka ho timer queue mei
 for (let i = 0; i < 2000000; i++);
 
-// inference from experiment-7:
-// pehle microtask queue ke callbacks execute hote hai, phir timer queue ke, uske baad I/O queue ke
+// inference from experiment-9:
+// yaha close queue pehle execute hua I/O queue se aisa kyu?
+// yeh I/O polling ke karan hua hai, I/O queue mei async callbacks apne operation ke complete hone par hi queue kiye jaate hai, aur iske liye I/O polling ki jaati hai; kyuki I/O polling I/O queue ke baad hoti hai isiliye close queue pehle execute hua I/O queue se, aur jab dusri baad event loop ka iteration hoga tab I/O queue wala code run hoga
