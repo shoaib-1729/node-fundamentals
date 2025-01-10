@@ -367,18 +367,36 @@
 ////////////////////
 
 
-// experiment-13: execution order of microtask queue, timer queue, I/O queue (I/O polling) and check queue
+// experiment-13: close queue
+// note: close queue mei queue karne ke liye 'close' event ka use hota hai
 
+// import fs
+const fs = require('node:fs');
 
-// timer queue
+// readable stream
+const readableStream = fs.createReadStream(__filename);
+// close the readable stream
+readableStream.close()
+
+// on close event
+readableStream.on('close', () => {
+    console.log('readable close stream callback');
+});
+
+// set immediate
+setImmediate(() => console.log('setImmediate 1'));
+
+// set timeout
 setTimeout(() => {
     console.log('setTimeout 1');
-}, 0);
+}, 0)
 
-// check queue
-setImmediate(() => {
-    console.log('setImmediate 1');
-})
+// promise queue
+Promise.resolve().then(() => console.log('promise 1'));
 
-// inference from experiment-13:
-// jab setTimeout with 0ms delay aur setImmediate ko saath mei run karege, us case mei order of execution guaranteed nhi hoga (timer ke 0ms delay of execution ke karan)
+// next tick queue
+process.nextTick(() => console.log('nextTick 1'));
+
+
+// inference from experiment-14:
+// close queue sabse last mei execute hoga, saare queues ke callbacks khatam ho jaane ke baad event loop mei
