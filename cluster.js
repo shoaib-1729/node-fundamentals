@@ -6,6 +6,13 @@
 const cluster = require('node:cluster');
 // HTTP module import
 const http = require('node:http');
+// os module
+const OS = require('node:os');
+
+// cpu cores
+console.log(OS.cpus().length);
+
+
 
 // Agar current process master hai
 if (cluster.isMaster) {
@@ -38,3 +45,7 @@ if (cluster.isMaster) {
         console.log('Server is running on port 8000');
     });
 }
+
+// things to note:
+// kam se kam 2 worker banao, ek banaoge toh woh no-cluster scenerio ke barabar hoga, aani ek hi worker saari incoming requests ko dekh raha hoga
+// agar cluster wala scenerio mimic karna hai without writing the above code, 'pm2' npm package ka use kar sakte ho, iska use karke no-cluster.js file ko run karo toh wahi cluster wala scenerio mimic karega
